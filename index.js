@@ -24,16 +24,12 @@ const injectedScript = function() {
       setTimeout(waitForBridge, 200);
     }
     else {
-      let height = 0;
-      if(document.documentElement.clientHeight>document.body.clientHeight)
-      {
-        height = document.documentElement.clientHeight
-      }
-      else
-      {
-        height = document.body.clientHeight
-      }
-      postMessage(height)
+      const maxHeight = Math.max(
+        0,
+        document.documentElement.clientHeight,
+        document.body.clientHeight,
+      );
+      setTimeout(() => postMessage(maxHeight), 0);
     }
   }
   waitForBridge();
@@ -73,8 +69,10 @@ export default class MyWebView extends Component {
     return (
       <WebView
         ref={(ref) => { this.webview = ref; }}
-        injectedJavaScript={'(' + String(injectedScript) + ')();' +
-          'window.postMessage = String(Object.hasOwnProperty).replace(\'hasOwnProperty\', \'postMessage\');'}
+        injectedJavaScript={`
+          (${String(injectedScript)})();
+          window.postMessage = String(Object.hasOwnProperty).replace(\'hasOwnProperty\', \'postMessage\');
+        `}
         scrollEnabled={this.props.scrollEnabled || false}
         onMessage={this._onMessage}
         javaScriptEnabled={true}
