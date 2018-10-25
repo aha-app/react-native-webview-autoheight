@@ -29,6 +29,9 @@ const injectedScript = function() {
         document.documentElement.clientHeight,
         document.body.clientHeight,
       );
+      // Some devices (iOS) need the height immediately, others
+      // (Android 9.0) need to receive it a tick later.
+      postMessage(maxHeight);
       setTimeout(() => postMessage(maxHeight), 0);
     }
   }
